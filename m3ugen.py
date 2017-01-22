@@ -25,7 +25,13 @@ def cleanupFilename(filename):
     
 def getM3uFilename(file):
     tags = ID3(file)
-    albArtist = unicode(tags["TPE2"])
+    audio = MP3(file)
+    #print audio
+    tagName = "TPE2"
+    if (tagName not in tags):
+        tagName = "TPE1"
+    #print tags
+    albArtist = unicode(tags[tagName])
     album = unicode(tags["TALB"])
 
     discStr = u""
@@ -43,6 +49,7 @@ def writeM3u(path, files):
         return
     
     m3ufilename = getM3uFilename(os.path.join(path, files[0]))
+    print "---"
     name = os.path.join(path, m3ufilename)
     with codecs.open(name, 'w', encoding='utf-8') as fp:
         fp.write(FORMAT_DESCRIPTOR + "\n")
@@ -50,7 +57,9 @@ def writeM3u(path, files):
         for track in files:
             audio = MP3(os.path.join(path, track))
             tags = ID3(os.path.join(path, track))
-            
+
+            #print audio
+            #print tags
             artist = unicode(tags["TPE1"])
             title = unicode(tags["TIT2"])
             displayName = artist + u" - " + title
@@ -116,6 +125,7 @@ def main():
         sys.exit(1)
 
     path = sys.argv[1].decode("iso-8859-1")
+    
     
     if os.path.exists(path):
         deleteAllM3us(path)
