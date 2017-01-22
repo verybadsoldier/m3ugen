@@ -87,7 +87,7 @@ def deleteAllM3us(path):
     items = os.walk(path)
     for item in items:
         files = item[2]
-        m3us = [i for i in files if (i[-3:] == "m3u" or i[-4:] == "m3u8")]
+        m3us = [i for i in files if (i[-3:] == "m3u" or i[-3:] == "m3u8")]
         for m3u in m3us:
             m3upath = os.path.join(item[0], m3u)
             print "Deleting: %s" % m3upath.encode("utf8")
@@ -100,7 +100,10 @@ def process(dir):
         try:
             generateM3u(item)
         except Exception as ex:
-            print "Error processing directory '%s': %s" % (item[0], unicode(ex))
+            msg = "Error processing directory '%s': %s" % (item[0], unicode(ex))
+            print msg
+            global errors
+            errors.append(msg)
      
 def _usage():
     """ print the usage message """
@@ -112,9 +115,10 @@ def _usage():
     print msg
 
 def printErrorSummary():
+    global errors
     print "Errors: %s" % len(errors)
     for error in errors:
-        print("%s -> %s" % (error['dir'].encode("utf8"), error['ex'].encode("utf8")))
+        print("%s" % error)
     print "---"
     
 def main():
